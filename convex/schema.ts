@@ -12,4 +12,11 @@ export default defineSchema({
         done: v.boolean(),
         sectionId: v.id("sections"), // Liên kết section
     }),
+    userTable: defineTable({
+        name: v.string(),
+        email: v.string(),
+        subscription: v.optional(v.string()),
+        token: v.number()
+
+    })
 });
