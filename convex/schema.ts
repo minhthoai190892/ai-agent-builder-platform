@@ -18,5 +18,11 @@ export default defineSchema({
         subscription: v.optional(v.string()),
         token: v.number()
 
+    }),
+    AgentTable: defineTable({
+        name: v.string(),
+        config: v.optional(v.any()),
+        published: v.boolean(),
+        userId: v.id("userTable")
     })
 });

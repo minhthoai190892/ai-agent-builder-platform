@@ -8,6 +8,7 @@
  * @module
  */
 
+import type * as agent from "../agent.js";
 import type * as tasks from "../tasks.js";
 import type * as user from "../user.js";
 
@@ -26,6 +27,7 @@ import type {
  * ```
  */
 declare const fullApi: ApiFromModules<{
+  agent: typeof agent;
   tasks: typeof tasks;
   user: typeof user;
 }>;
