@@ -45,3 +45,20 @@ export const toggleTask = mutation({
         await ctx.db.patch(args.id, { done: args.done });
     },
 });
+
+// Update tên task
+export const editTaskTitle = mutation({
+    args: {
+        id: v.id("tasks"),
+        title: v.string()
+    },
+    handler: async (ctx, args) => {
+        await ctx.db.patch(args.id, { title: args.title });
+    },
+});
+
+export const deleteTask = mutation({
+    args: { id: v.id("tasks") }, async handler(ctx, args) {
+        await ctx.db.delete(args.id)
+    },
+})

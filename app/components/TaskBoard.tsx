@@ -3,15 +3,23 @@
 import { useQuery, useMutation } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import { useState } from "react";
+import { Input } from "@/components/ui/input";
+import { editTaskTitle } from "@/convex/tasks";
+import { Button } from "@/components/ui/button";
+import { Delete, DeleteIcon } from "lucide-react";
 
 export default function TaskBoard() {
   const sections = useQuery(api.tasks.getSectionsWithTasks);
   const addTask = useMutation(api.tasks.addTask);
   const toggleTask = useMutation(api.tasks.toggleTask);
   const addSection = useMutation(api.tasks.addSection);
-
+  const editTask = useMutation(api.tasks.editTaskTitle)
   const [newSectionTitle, setNewSectionTitle] = useState("");
   const [newTasks, setNewTasks] = useState<{ [key: string]: string }>({});
+  const [editingTaskId, setEditingTaskId] = useState<string | null>(null);
+  const [editingValue, setEditingValue] = useState("");
+  const deleteTask = useMutation(api.tasks.deleteTask)
+
 
   if (!sections) return <p>Loading...</p>;
 
@@ -34,13 +42,30 @@ export default function TaskBoard() {
                   toggleTask({ id: task._id, done: !task.done })
                 }
               />
-              <span
-                className={`text-base ${
-                  task.done ? "line-through text-gray-400" : ""
-                }`}
+              {editingTaskId === task._id ? <Input autoFocus placeholder="{taskName}" value={editingValue} onChange={(e) => setEditingValue(e.target.value)} onKeyDown={async (e) => {
+                if (e.key === "Enter") {
+                  await editTask({ id: task._id, title: editingValue })
+                  setEditingTaskId(null)
+                }
+                if (e.key === "Escape") {
+
+                  setEditingTaskId(null)
+
+                }
+
+              }} /> : <span
+                className={`text-base ${task.done ? "line-through text-gray-400" : ""
+                  } cursor-pointer flex justify-between items-center w-full`}
+                onClick={() => {
+                  setEditingTaskId(task._id)
+                  setEditingValue(task.title)
+
+                }}
               >
                 {task.title}
-              </span>
+                <span className="cursor-pointer text-red-500" onClick={() => deleteTask({ id: task._id })}><DeleteIcon /></span>
+              </span>}
+
             </div>
           ))}
 
