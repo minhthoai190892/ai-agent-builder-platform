@@ -9,8 +9,8 @@ export default function AgentToolsPanel() {
             id: `${element.id}-${Date.now()}`,
             position: { x: 0, y: 100 },
             data: {
-                lable: element.name, 
-         
+                lable: element.name,
+
                 bgColor: element.bgColor,
                 id: element.id,
                 type: element.type
@@ -31,7 +31,7 @@ export default function AgentToolsPanel() {
                 {AgentTools.map((element, index) => (
                     <div key={index} className='flex items-center  gap-3 cursor-pointer hover:bg-gray-100 p-2' onClick={() => onAgentToolClick(element)}>
                         <element.icon className='p-2 rounded-lg h-8 w-8' style={{
-                            background: element.bgColor
+                            backgroundColor: element.bgColor
                         }} />
                         <h2 className='text-sm font-medium text-gray-700'>{element.name}</h2>
                     </div>

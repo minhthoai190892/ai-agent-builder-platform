@@ -19,14 +19,14 @@ export const AgentTools: AgentType[] = [
     {
         name: "End",
         icon: Square,
-        bgColor: "#cdf7e3",
+        bgColor: "#FFF3CD",
         id: "end",
         type: "EndNode"
     },
     {
         name: "If/Else",
         icon: Merge,
-        bgColor: "#cdf7e3",
+        bgColor: "#FFF3CD",
         id: "ifElse",
         type: "IfElseNode"
     },
@@ -42,7 +42,7 @@ export const AgentTools: AgentType[] = [
         icon: ThumbsUp,
         bgColor: "#cdf7e3",
         id: "approval",
-        type: "ApprovalNode"
+        type: "UserApprovalNode"
     },
     {
         name: "API",

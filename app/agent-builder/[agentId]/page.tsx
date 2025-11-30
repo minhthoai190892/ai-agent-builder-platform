@@ -3,11 +3,11 @@ import { useState, useCallback, useContext, useEffect } from 'react';
 import { ReactFlow, applyNodeChanges, applyEdgeChanges, addEdge, Background, Controls, MiniMap, Panel } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import AgentBuilderHeader from '../_components/AgentBuilderHeader';
-import StartNode from '../_components/StartNode';
-import AgentNode from '../_components/AgentNode';
+import StartNode from '../_customNdoes/StartNode';
+import AgentNode from '../_customNdoes/AgentNode';
 import AgentToolsPanel from '../_components/AgentToolsPanel';
 import { WorkflowContext } from '@/context/WorkflowContext';
-import EndNode from '../_components/EndNode';
+import EndNode from '../_customNdoes/EndNode';
 import { useConvex, useMutation, useQueries, useQuery } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import { useParams } from 'next/navigation';
@@ -17,6 +17,10 @@ import { Button } from '@/components/ui/button';
 import { Id } from '@/convex/_generated/dataModel';
 import { toast } from 'sonner';
 import { Loader2 } from 'lucide-react';
+import IfElseNode from '../_customNdoes/IfElseNode';
+import WhileNode from '../_customNdoes/WhileNode';
+import UserApprovalNode from '../_customNdoes/UserApprovalNode';
+import ApiNode from '../_customNdoes/ApiNode';
 
 const initialNodes = [
     { id: 'n1', position: { x: 0, y: 0 }, data: { label: 'Node 1' }, type: 'StartNode', },
@@ -28,7 +32,11 @@ const initialEdges = [{ id: 'n1-n2', source: 'n1', target: 'n2' }];
 const nodeTypes = {
     StartNode: StartNode,
     AgentNode: AgentNode,
-    EndNode: EndNode
+    EndNode: EndNode,
+    IfElseNode: IfElseNode,
+    WhileNode: WhileNode,
+    UserApprovalNode: UserApprovalNode,
+    ApiNode: ApiNode
 
 };
 export default function AgentBuilder() {
@@ -136,7 +144,7 @@ export default function AgentBuilder() {
                         Settings
                     </Panel>
                     <Panel position='bottom-center'>
-                        <Button className='cursor-pointer ' disabled={loading} onClick={saveNodesAndEdges}>{loading ? <Loader2 className='animate-spin'/> : "Save"}</Button>
+                        <Button className='cursor-pointer ' disabled={loading} onClick={saveNodesAndEdges}>{loading ? <Loader2 className='animate-spin' /> : "Save"}</Button>
                     </Panel>
                 </ReactFlow>
             </div>
