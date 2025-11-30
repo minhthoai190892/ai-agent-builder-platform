@@ -1,40 +1,120 @@
 "use client"
-import { useState, useCallback } from 'react';
-import { ReactFlow, applyNodeChanges, applyEdgeChanges, addEdge, Background, Controls, MiniMap } from '@xyflow/react';
+import { useState, useCallback, useContext, useEffect } from 'react';
+import { ReactFlow, applyNodeChanges, applyEdgeChanges, addEdge, Background, Controls, MiniMap, Panel } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import AgentBuilderHeader from '../_components/AgentBuilderHeader';
 import StartNode from '../_components/StartNode';
 import AgentNode from '../_components/AgentNode';
+import AgentToolsPanel from '../_components/AgentToolsPanel';
+import { WorkflowContext } from '@/context/WorkflowContext';
+import EndNode from '../_components/EndNode';
+import { useConvex, useMutation, useQueries, useQuery } from 'convex/react';
+import { api } from '@/convex/_generated/api';
+import { useParams } from 'next/navigation';
+import { Agent } from '@/utils/Agent';
+import { query } from '@/convex/_generated/server';
+import { Button } from '@/components/ui/button';
+import { Id } from '@/convex/_generated/dataModel';
+import { toast } from 'sonner';
+import { Loader2 } from 'lucide-react';
 
 const initialNodes = [
     { id: 'n1', position: { x: 0, y: 0 }, data: { label: 'Node 1' }, type: 'StartNode', },
     { id: 'n2', position: { x: 0, y: 100 }, data: { label: 'Node 2' }, type: 'AgentNode', },
 ];
 const initialEdges = [{ id: 'n1-n2', source: 'n1', target: 'n2' }];
+
+
 const nodeTypes = {
     StartNode: StartNode,
-    AgentNode: AgentNode
+    AgentNode: AgentNode,
+    EndNode: EndNode
+
 };
 export default function AgentBuilder() {
-    const [nodes, setNodes] = useState(initialNodes);
-    const [edges, setEdges] = useState(initialEdges);
+    const [nodes, setNodes] = useState([]);
+    const [edges, setEdges] = useState([]);
+    const agentId = useParams()
+    const [agentDetail, setAgentDetail] = useState<Agent>()
+    const [loading, setLoading] = useState<boolean>(false)
 
+    const updateAgentDetail = useMutation(api.agent.updateAgentDetail)
+
+    const { addedNodes, setAddedNodes, nodeEdges, setNodeEdges } = useContext(WorkflowContext)
+    const convex = useConvex()
+    const getAgentDetail = async () => {
+
+        const result = await convex.query(api.agent.getAgentById, {
+            agentId: agentId.agentId as Id<"AgentTable">
+        })
+        setAgentDetail(result);
+
+    }
+    const saveNodesAndEdges = async () => {
+
+        try {
+            setLoading(true)
+            const result = await updateAgentDetail({
+                // @ts-ignore
+                id: agentDetail?._id,
+                edges: nodeEdges,
+                nodes: addedNodes
+            })
+            toast.success("Save Agent Success")
+            setLoading(false)
+
+        } catch (error) {
+            console.log(error);
+            setLoading(false)
+
+        }
+
+    }
+
+    useEffect(() => {
+        getAgentDetail()
+    }, [])
+
+    useEffect(() => {
+        if (agentDetail) {
+            setNodes(agentDetail.nodes)
+            setEdges(agentDetail.edges)
+            setAddedNodes(agentDetail.nodes)
+            setNodeEdges(agentDetail.edges)
+        }
+        // addedNodes && setNodes(addedNodes)
+        // nodeEdges && setEdges(nodeEdges)
+    }, [agentDetail])
+    useEffect(() => {
+        addedNodes && setNodes(addedNodes)
+
+    }, [addedNodes])
+    useEffect(() => {
+        edges && setNodeEdges(edges)
+
+    }, [edges])
     const onNodesChange = useCallback(
-        (changes: any) => setNodes((nodesSnapshot) => applyNodeChanges(changes, nodesSnapshot)),
-        [],
+        (changes: any) => setNodes((nodesSnapshot) => {
+
+            const updated = applyNodeChanges(changes, nodesSnapshot)
+            setAddedNodes(updated)
+            return updated
+        }),
+        [setAddedNodes],
     );
     const onEdgesChange = useCallback(
         (changes: any) => setEdges((edgesSnapshot) => applyEdgeChanges(changes, edgesSnapshot)),
         [],
     );
     const onConnect = useCallback(
+        // @ts-ignore
         (params: any) => setEdges((edgesSnapshot) => addEdge(params, edgesSnapshot)),
         [],
     );
 
     return (
         <div>
-            <AgentBuilderHeader />
+            <AgentBuilderHeader agentDetail={agentDetail} />
             <div style={{ width: '100vw', height: '90vh' }}>
                 <ReactFlow
                     nodes={nodes}
@@ -49,6 +129,15 @@ export default function AgentBuilder() {
                     <Background />
                     <Controls />
                     <MiniMap />
+                    <Panel position='top-left'>
+                        <AgentToolsPanel />
+                    </Panel>
+                    <Panel position='top-right'>
+                        Settings
+                    </Panel>
+                    <Panel position='bottom-center'>
+                        <Button className='cursor-pointer ' disabled={loading} onClick={saveNodesAndEdges}>{loading ? <Loader2 className='animate-spin'/> : "Save"}</Button>
+                    </Panel>
                 </ReactFlow>
             </div>
         </div>

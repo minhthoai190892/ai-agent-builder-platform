@@ -22,7 +22,9 @@ export default defineSchema({
     AgentTable: defineTable({
         name: v.string(),
         config: v.optional(v.any()),
-        published: v.boolean(),
-        userId: v.id("userTable")
+        published: v.boolean(), 
+        nodes: v.optional(v.any()),
+        edges: v.optional(v.any()),
+        userId: v.id("userTable"),
     })
 });
