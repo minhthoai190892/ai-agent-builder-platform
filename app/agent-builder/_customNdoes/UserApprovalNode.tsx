@@ -10,7 +10,7 @@ export default function UserApprovalNode({ data }: any) {
                 <ThumbsUp className='p-2 rounded-lg h-8 w-8 ' style={{
                     backgroundColor: data?.bgColor!
                 }} />
-               <div className='flex flex-col'>
+                <div className='flex flex-col'>
                     <h2>{data!.lable}</h2>
                     <p className='text-xs text-gray-500'>{data!.lable}</p>
                 </div>

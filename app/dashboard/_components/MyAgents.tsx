@@ -29,16 +29,16 @@ export default function MyAgents() {
   }
   return (
     <div>
-      <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 '>
+      {agentList.length === 0 ? "Add Agent Builder" : <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 '>
         {agentList.map((agent, index) => (
-         <Link key={index} href={`/agent-builder/${agent._id}`}>
-          <div  className='p-3 border rounded-2xl shadow'>
-            <GitBranchPlus className='bg-yellow-100 h-8 w-8 rounded-sm' />
-            <h2 className='mt-3'>{agent.name}</h2>
-            <h2 className='text-xl text-gray-400'>{moment(agent._creationTime).fromNow()}</h2>
-          </div></Link>
+          <Link key={index} href={`/agent-builder/${agent._id}`}>
+            <div className='p-3 border rounded-2xl shadow'>
+              <GitBranchPlus className='bg-yellow-100 h-8 w-8 rounded-sm' />
+              <h2 className='mt-3'>{agent.name}</h2>
+              <h2 className='text-xl text-gray-400'>{moment(agent._creationTime).fromNow()}</h2>
+            </div></Link>
         ))}
-      </div>
+      </div>}
     </div>
   )
 }

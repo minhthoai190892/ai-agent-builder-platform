@@ -1,6 +1,6 @@
 "use client"
 import { useState, useCallback, useContext, useEffect } from 'react';
-import { ReactFlow, applyNodeChanges, applyEdgeChanges, addEdge, Background, Controls, MiniMap, Panel } from '@xyflow/react';
+import { ReactFlow, applyNodeChanges, applyEdgeChanges, addEdge, Background, Controls, MiniMap, Panel, useOnSelectionChange } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import AgentBuilderHeader from '../_components/AgentBuilderHeader';
 import StartNode from '../_customNdoes/StartNode';
@@ -21,7 +21,8 @@ import IfElseNode from '../_customNdoes/IfElseNode';
 import WhileNode from '../_customNdoes/WhileNode';
 import UserApprovalNode from '../_customNdoes/UserApprovalNode';
 import ApiNode from '../_customNdoes/ApiNode';
-
+import SettingPanel from '../_components/SettingPanel';
+import { OnSelectionChangeParams } from '@xyflow/react';
 const initialNodes = [
     { id: 'n1', position: { x: 0, y: 0 }, data: { label: 'Node 1' }, type: 'StartNode', },
     { id: 'n2', position: { x: 0, y: 100 }, data: { label: 'Node 2' }, type: 'AgentNode', },
@@ -40,7 +41,7 @@ const nodeTypes = {
 
 };
 export default function AgentBuilder() {
-    const [nodes, setNodes] = useState([]);
+    const [nodes, setNodes] = useState([{ id: 'n1', position: { x: 0, y: 0 }, data: { label: 'Node 1' }, type: 'StartNode', },]);
     const [edges, setEdges] = useState([]);
     const agentId = useParams()
     const [agentDetail, setAgentDetail] = useState<Agent>()
@@ -48,7 +49,8 @@ export default function AgentBuilder() {
 
     const updateAgentDetail = useMutation(api.agent.updateAgentDetail)
 
-    const { addedNodes, setAddedNodes, nodeEdges, setNodeEdges } = useContext(WorkflowContext)
+
+    const { addedNodes, setAddedNodes, nodeEdges, setNodeEdges, selectNode, setSelectNode } = useContext(WorkflowContext)
     const convex = useConvex()
     const getAgentDetail = async () => {
 
@@ -58,6 +60,10 @@ export default function AgentBuilder() {
         setAgentDetail(result);
 
     }
+    // const onNodeSelect = useCallback(({ nodes, edges }: OnSelectionChangeParams) => {
+
+    // }, [])
+
     const saveNodesAndEdges = async () => {
 
         try {
@@ -119,7 +125,23 @@ export default function AgentBuilder() {
         (params: any) => setEdges((edgesSnapshot) => addEdge(params, edgesSnapshot)),
         [],
     );
+    const onNodeSelect = useCallback(
+        ({ nodes, edges }: OnSelectionChangeParams) => {
+            console.log("Selected nodes:", nodes);
+            console.log("Selected edges:", edges);
 
+            // Nếu muốn lấy node đang được chọn
+            // const selectedNode = nodes?.[0];/
+            setSelectNode(nodes[0])
+
+            console.log(nodes[0]);
+        },
+        []
+    );
+
+    useOnSelectionChange({
+        onChange: onNodeSelect
+    })
     return (
         <div>
             <AgentBuilderHeader agentDetail={agentDetail} />
@@ -141,7 +163,7 @@ export default function AgentBuilder() {
                         <AgentToolsPanel />
                     </Panel>
                     <Panel position='top-right'>
-                        Settings
+                        <SettingPanel />
                     </Panel>
                     <Panel position='bottom-center'>
                         <Button className='cursor-pointer ' disabled={loading} onClick={saveNodesAndEdges}>{loading ? <Loader2 className='animate-spin' /> : "Save"}</Button>

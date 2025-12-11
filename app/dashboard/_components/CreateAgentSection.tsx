@@ -28,7 +28,9 @@ export default function CreateAgentSection() {
             }
             const agentId = await createAgentMutation({
                 name: agentName ?? "",
-                userId: user?.userDetail?._id
+                userId: user?.userDetail?._id,
+                edges: [],
+                nodes: [{ id: 'n1', position: { x: 0, y: 0 }, data: { label: 'Node 1' }, type: 'StartNode', }]
             })
             setOpenDialog(false)
             setAgentName("")

@@ -4,12 +4,16 @@ import { mutation, query } from "./_generated/server";
 export const createAgent = mutation({
     args: {
         name: v.string(),
-        userId: v.id("userTable")
+        userId: v.id("userTable"),
+        nodes: v.any(),
+        edges: v.any()
     }, async handler(ctx, args) {
         const result = await ctx.db.insert("AgentTable", {
             name: args.name,
             published: false,
-            userId: args.userId
+            nodes: args.nodes,
+            edges: args.edges,
+            userId: args.userId,
         })
         return result
     }

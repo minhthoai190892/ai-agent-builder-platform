@@ -9,7 +9,7 @@ export default function AgentToolsPanel() {
             id: `${element.id}-${Date.now()}`,
             position: { x: 0, y: 100 },
             data: {
-                lable: element.name,
+                label: element.name,
 
                 bgColor: element.bgColor,
                 id: element.id,
@@ -18,7 +18,6 @@ export default function AgentToolsPanel() {
             type: element.type
         }
         setAddedNodes((prev: any) => [...prev, newNode])
-        console.log(element);
 
     }
 

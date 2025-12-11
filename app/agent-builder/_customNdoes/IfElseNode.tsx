@@ -4,6 +4,8 @@ import { Merge } from 'lucide-react'
 import React from 'react'
 
 export default function IfElseNode({ data }: any) {
+    console.log(data);
+    
     return (
         <div className='bg-white  rounded-2xl p-2 px-3 border'>
             <div className='flex gap-2 items-center'>
